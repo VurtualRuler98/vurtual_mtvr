@@ -1,0 +1,6 @@
+_par = params [["_veh",objNull,[objNull]]];
+if ((!_par) || (isNull _veh) || !(_veh isKindOf "vurtual_MTVRBase") || !(alive _veh)) exitWith {false};
+_veh addAction ["MTVR Passenger mode",{[(_this select 0),false] call vurtual_mtvr_fnc_cargobed;},[],1.5,false,true,"","(alive _target) && (vehicle _this == _this) && (count getVehicleCargo _target)==0 && (vehicleCargoEnabled _target)",15,false,"sides"];
+_veh addAction ["MTVR Cargo mode",{[(_this select 0),true] call vurtual_mtvr_fnc_cargobed;},[],1.5,false,true,"","(alive _target) && (vehicle _this == _this) && !(vehicleCargoEnabled _target)",15,false,"sides"];
+_veh addAction ["Install cargo cover",{(_this select 0) animateSource ["cargo_cover_hide",0];},[],1.5,false,true,"","(alive _target) && (vehicle _this == _this) && !(isEngineOn _target) && (_target animationSourcePhase 'cargo_cover_hide')==1",5,false,"cover_action"];
+_veh addAction ["Store cargo cover",{(_this select 0) animateSource ["cargo_cover_hide",1];},[],1.5,false,true,"","(alive _target) && (vehicle _this == _this) && !(isEngineOn _target) && (_target animationSourcePhase 'cargo_cover_hide')==0",5,false,"cover_action"];

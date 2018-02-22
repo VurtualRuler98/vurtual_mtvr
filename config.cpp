@@ -60,7 +60,8 @@ class CfgFunctions {
 		class vurtual_mtvrFunctions {
 			file = "\vurtual_mtvr\fnc";
 			class init {};
-			class blackout {};
+			class passenger {};
+			class cargobed {};
 		};
 	};
 };
@@ -210,7 +211,7 @@ class CfgVehicles {
 				forceAnimate[] = {"blackout_hide",1};
 			};
 			class blackout_hide {
-				displayName = "Turn blackout lights off"
+				displayName = "Turn blackout lights off";
 				source = "user";
 				initPhase = 1;
 				animPeriod = 0.01;
@@ -482,27 +483,6 @@ class CfgVehicles {
 				passThrough = true;
 			};
 		};
-		class UserActions {
-			class lights_blackout {
-				displayName = "Lights: Blackout";
-				priority=1;
-				radius=5;
-				showWindow=0;
-				hideOnUse=1;
-				onlyForPlayer=false;
-				condition = "(alive _target) && !(isLightOn _target) && (driver _target == _this) && (_target animationSourcePhase 'blackout_hide')==1";
-				statement = "_veh = (_this select 0);_veh animateSource ['blackout_hide',0]; _veh animateSource ['brakelight_normal_hide',1];";
-			};
-			class lights_stoplight: lights_blackout {
-				displayName = "Lights: Stoplight";
-				condition = "(alive _target) && !(isLightOn _target) && (driver _target == _this) && (_target animationSourcePhase 'brakelight_normal_hide')==1";
-				statement = "_veh = (_this select 0);_veh animateSource ['blackout_hide',1]; _veh animateSource ['brakelight_normal_hide',0];";
-			};
-			class lights_none: lights_blackout {
-				displayName = "Lights: None";
-				condition = "(alive _target) && !(isLightOn _target) && (driver _target == _this) && ((_target animationSourcePhase 'brakelight_normal_hide')==0 || (_target animationSourcePhase 'blackout_hide')==0)";
-				statement =  statement = "_veh = (_this select 0);_veh animateSource ['blackout_hide',1]; _veh animateSource ['brakelight_normal_hide',1];";
-			};
 		class Reflectors {
 			class LightCarHeadL01 {
 				color[] = {1900, 1800, 1700};
@@ -575,6 +555,10 @@ class CfgVehicles {
 					fov = 0.7;
 				};
 			};
+		};
+		class EventHandlers {
+			init = "_this call vurtual_mtvr_fnc_init";
+			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
 		};
 	};
 	class vurtual_mtvr_lhs16: vurtual_MTVRBase {
@@ -668,10 +652,6 @@ class CfgVehicles {
 		transportSoldier = 2;
 		threat[] = {0.0, 0.0, 0.0};
 		class TransportWeapons {};
-		class EventHandlers {
-			init = "_this call vurtual_mtvr_fnc_blackout; if (local (_this select 0)) then {[(_this select 0), """", [], true] call bis_fnc_initVehicle;};";
-			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
-		};
 	};
 
 	class vurtual_MTVRBase_Passenger: vurtual_MTVRBase {
@@ -717,15 +697,11 @@ class CfgVehicles {
 				source = "user";
 				initPhase = 0;
 				animPeriod = 3;
-				onPhaseChanged = "(_this select 0) animateSource ['cargo_cover_hide',(_this select 1),is3den];"
+				onPhaseChanged = "(_this select 0) animateSource ['cargo_cover_hide',(_this select 1),is3den];";
 			};
 		};
 		hasGunner = false;
 		transportMaxBackpacks = 25;
-		class EventHandlers {
-			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
-			init = "_this call vurtual_mtvr_fnc_blackout;if (local (_this select 0)) then {[(_this select 0), """", [], true] call bis_fnc_initVehicle;};_this call vurtual_mtvr_fnc_init;";
-		};
 	};
 	class vurtual_mtvr_mk23: vurtual_MTVRBase_Passenger {
 		scope = 2;
