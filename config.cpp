@@ -38,14 +38,56 @@ enum {
 springStrength = (MASS/WHEELS)*STRENGTH^2; \
 springDamperRate = DAMPER*2*((MASS/WHEELS)*STRENGTH^2*(MASS/WHEELS))^0.5;
 
+#define MTVR_WHEELS_4(MASS) 	numberPhysicalWheels=4; \
+		class Wheels { \
+			class LF: MTVRBaseWheel { \
+				boneName = "wheel_1_1_damper"; \
+				steering = 1; \
+				side = "left"; \
+				center   = "wheel_1_1_axis"; \
+				boundary = "wheel_1_1_bound"; \
+				suspForceAppPointOffset = "wheel_1_1_axis"; \
+				tireForceAppPointOffset = "wheel_1_1_axis"; \
+				WHEEL_SPRINGS(MASS,4,WHEEL_STRENGTH,WHEEL_DAMPER) \
+			}; \
+			class LR: LF { \
+				boneName = "wheel_1_2_damper"; \
+				steering = 0; \
+				center   = "wheel_1_2_axis"; \
+				boundary = "wheel_1_2_bound"; \
+				suspForceAppPointOffset = "wheel_1_2_axis"; \
+				tireForceAppPointOffset = "wheel_1_2_axis"; \
+				maxHandBrakeTorque = 3000; \
+			}; \
+			class RF: LF { \
+				boneName = "wheel_2_1_damper"; \
+				center   = "wheel_2_1_axis"; \
+				boundary = "wheel_2_1_bound"; \
+				suspForceAppPointOffset = "wheel_2_1_axis"; \
+				tireForceAppPointOffset = "wheel_2_1_axis"; \
+				side = "right"; \
+			}; \
+			class RR: RF { \
+				boneName = "wheel_2_2_damper"; \
+				steering = 0; \
+				center   = "wheel_2_2_axis"; \
+				boundary = "wheel_2_2_bound"; \
+				suspForceAppPointOffset = "wheel_2_2_axis"; \
+				tireForceAppPointOffset = "wheel_2_2_axis"; \
+				maxHandBrakeTorque = 3000; \
+			}; \
+		};
+
 class DefaultEventhandlers;	// External class reference
 
 class CfgPatches {
 	class vurtual_mtvr {
 		units[] = {
 			"vurtual_mtvr_mk23",
+			"vurtual_mtvr_mk23_flatbed",
 			"vurtual_mtvr_lhs16",
-			"vurtual_mtvr_4x4"
+			"vurtual_mtvr_4x4",
+			"vurtual_mtvr_4x4_flatbed"
 			};
 		weapons[] = {};
 		requiredVersion = 0.1;
@@ -164,10 +206,10 @@ class CfgVehicles {
 		antiRollbarSpeedMin = 0;
 		antiRollbarSpeedMax = 20;
 		driverCompartments = "Compartment1";
-		cargoCompartments[] = {"Compartment1","Compartment1", "Compartment2"};
-		cargoIsCoDriver[] = {1,1,0};
-		cargoProxyIndexes[] = {1,2,3,4,5,6,7,8,9,10,11,12};
-		soundAttenuationCargo[] = {1,1,0};
+		cargoCompartments[] = {"Compartment1","Compartment2"};
+		cargoIsCoDriver[] = {1,0};
+		cargoProxyIndexes[] = {2,3,4,5,6,7,8,9,10,11,12};
+		soundAttenuationCargo[] = {1,0};
 		crewVulnerable = true;
 		ejectDeadCargo = false;
 		ejectDeadDriver = false;
@@ -197,7 +239,7 @@ class CfgVehicles {
 		soundServo[] = {"A3\sounds_f\dummysound", db-40, 1.0, 10};
 		soundEnviron[] = {"", 0.562341, 1};
 		transportMaxBackpacks = 50;
-		transportSoldier = 12;
+		transportSoldier = 11;
 		hiddenSelections[] = {"camo1","camo2","cargo_tarp"};
 		hiddenSelectionsTextures[] = {"vurtual_mtvr\data\mtvr_body_co.paa","vurtual_mtvr\data\mtvr_body2_co.paa","vurtual_mtvr\data\mtvr_tarp_co.paa"};
 		animationList[] = {"brakelight_normal_hide",0,"blackout_hide",1};
@@ -217,6 +259,11 @@ class CfgVehicles {
 				animPeriod = 0.01;
 				forceAnimatePhase = 0;
 				forceAnimate[] = {"brakelight_normal_hide",1};
+			};
+			class Roof_Hatch {
+				source = "door";
+				initPhase = 0;
+				animPeriod = 0.1;
 			};
 		};
 		class VehicleTransport {
@@ -264,7 +311,7 @@ class CfgVehicles {
 		};
 		castDriverShadow = "false";
 		driverAction = "driver_offroad01";
-		cargoAction[] = {"passenger_low01", "passenger_generic01_leanright", "passenger_generic01_foldhands", "passenger_generic01_foldhands", "passenger_generic01_foldhands"};
+		cargoAction[] = {"passenger_generic01_foldhands", "passenger_generic01_foldhands", "passenger_generic01_foldhands", "passenger_generic01_foldhands"};
 		
 		// threat (VSoft, VArmor, VAir), how threatening vehicle is to unit types
 		threat[] = {0.8, 0.6, 0.3};
@@ -404,6 +451,11 @@ class CfgVehicles {
 			};
 
 		};
+		//more buttfix
+		hideWeaponsCargo = 1;
+		LODTurnedIn=1200;
+		LODTurnedOut=1;
+		
 		
 		#include "sounds.hpp"
 
@@ -414,12 +466,45 @@ class CfgVehicles {
 				effect = "ExhaustEffectOffroad";
 			};
 		};
-		
-		class Turrets : Turrets {
+		class CargoTurret;
+		class Turrets {
+			class CargoTurret_01: CargoTurret {
+				gunnerAction = "passenger_flatground_4_vehicle_passenger_stand_1";
+				gunnerInAction = "passenger_generic01_foldhands";
+				gunnerForceOptics=0;
+				hideWeaponsGunner = 0;
+				memoryPointGunnerOptics = "gunnerview";
+				LODTurnedIn = 1200;
+				gunnerOpticsModel = "";
+				stabilizedInAxes = 0;
+				enabledByAnimationSource="Roof_Hatch";
+				canHideGunner= 1;
+				forceHideGunner=0;
+				allowLauncherIn=0;
+				allowLauncherOut=1;
+				memoryPointsGetInGunner = "pos codriver";
+				memoryPointsGetInGunnerDir = "pos codriver dir";
+				animationSourceHatch = "Roof_Hatch";
+				gunnerGetInAction = "GetInHigh";
+				gunnerGetOutAction = "GetOutHigh";
+				gunnerName = "Hatch Gunner";
+				gunnerCompartments = "Compartment1";
+				proxyIndex = 1;
+				//gunnerFireAlsoInInternalCamera = 0;
+				isPersonTurret = 1;
+				inGunnerMayFire = 0;
+				outGunnerMayFire = 1;
+				maxElev = 90;
+				minElev = -30;
+				maxTurn = 90;
+				minTurn = -90;
+			};
+		};
+		/*class Turrets : Turrets {
 			class MainTurret : MainTurret {
 				body = "mainTurret";
 				gun = "mainGun";
-				hasGunner = true;
+				  = true;
 				weapons[] = {HMG_M2};
 				magazines[] = {"100Rnd_127x99_mag_Tracer_Yellow", "100Rnd_127x99_mag_Tracer_Yellow", "100Rnd_127x99_mag_Tracer_Yellow", "100Rnd_127x99_mag_Tracer_Yellow", "100Rnd_127x99_mag_Tracer_Yellow", "100Rnd_127x99_mag_Tracer_Yellow"};
 				soundServo[] = {"A3\sounds_f\dummysound", db-40, 1.0, 10};
@@ -440,7 +525,7 @@ class CfgVehicles {
 				
 				class ViewGunner : ViewOptics {};
 			};
-		};
+		};*/
 		
 		class HitPoints : HitPoints {
 			class HitGlass1 : HitGlass1 {
@@ -574,7 +659,6 @@ class CfgVehicles {
 				disableHeightLimit			= 1;
 			};
 		};
-		class Turrets {};
 		class Library {
 			libTextDesc = "MTVR LHS 16-Ton";
 		};
@@ -600,13 +684,15 @@ class CfgVehicles {
 				WHEEL_SPRINGS(18869,8,WHEEL_STRENGTH,WHEEL_DAMPER)
 			};
 			class LR1: LR {
+				side = "right";
+				steering = 1;
 				boneName = "wheel_1_3_damper";
 				center   = "wheel_1_3_axis";
 				boundary = "wheel_1_3_bound";
 				suspForceAppPointOffset = "wheel_1_3_axis";
 				tireForceAppPointOffset = "wheel_1_3_axis";
 			};
-			class LR2: LR {
+			class LR2: LR1 {
 				boneName = "wheel_1_4_damper";
 				center   = "wheel_1_4_axis";
 				boundary = "wheel_1_4_bound";
@@ -634,13 +720,15 @@ class CfgVehicles {
 				WHEEL_SPRINGS(18869,8,WHEEL_STRENGTH,WHEEL_DAMPER)				
 			};
 			class RR1: RR {
+				side = "left";
+				steering = 1;
 				boneName = "wheel_2_3_damper";
 				center   = "wheel_2_3_axis";
 				boundary = "wheel_2_3_bound";
 				suspForceAppPointOffset = "wheel_2_3_axis";
 				tireForceAppPointOffset = "wheel_2_3_axis";	
 			};
-			class RR2: RR {
+			class RR2: RR1 {
 				boneName = "wheel_2_4_damper";
 				center   = "wheel_2_4_axis";
 				boundary = "wheel_2_4_bound";
@@ -648,21 +736,35 @@ class CfgVehicles {
 				tireForceAppPointOffset = "wheel_2_4_axis";	
 			};
 		};
-		hasGunner = false;
-		transportSoldier = 2;
+		transportSoldier = 1;
 		threat[] = {0.0, 0.0, 0.0};
 		class TransportWeapons {};
 	};
-
+	class vurtual_MTVRBase_Flatbed: vurtual_MTVRBase {
+		transportSoldier = 1;
+		class AnimationSources: AnimationSources {
+			class bed_hide {
+				source = "user";
+				initPhase = 1;
+				animPeriod = 1;
+			};
+		};
+		class VehicleTransport: VehicleTransport {
+			class Carrier: Carrier {
+				cargoBayDimensions[]        = {"VTV_Flatbed_Base", "VTV_Flatbed_Corner"};
+				disableHeightLimit=1;
+				cargoAlignment[]            = {"front","left"};
+			};
+		};
+	};	
 	class vurtual_MTVRBase_Passenger: vurtual_MTVRBase {
 		VIVPassengers[] = {};
 		VIVGunners[] = {};
 		threat[] = {0.0, 0.0, 0.0};
-		class CargoTurret;
-
-		class Turrets {
-			class CargoTurret_01: CargoTurret {
-				gunnerAction = "passenger_inside_3";
+		class Turrets: Turrets {
+			class CargoTurret_01: CargoTurret_01 {};
+			class CargoTurret_02: CargoTurret {
+				gunnerAction = "passenger_inside_2";
 				memoryPointsGetInGunner = "pos cargo";
 				memoryPointsGetInGunnerDir = "pos cargo dir";
 				gunnerName = "$STR_A3_TURRETS_CARGOTURRET_L";
@@ -674,7 +776,7 @@ class CfgVehicles {
 				maxTurn = 15;
 				minTurn = -95;
 			};
-			class CargoTurret_02: CargoTurret_01 {
+			class CargoTurret_03: CargoTurret_02 {
 				proxyIndex = 14;
 				maxTurn = 95;
 				minTurn = -15;
@@ -683,6 +785,12 @@ class CfgVehicles {
 		};
 		animationList[] =  {"brakelight_normal_hide",0,"blackout_hide",1,"bedseat_fold",0,"cargo_cover_hide",0};
 		class AnimationSources: AnimationSources {
+			class tailgate_fold {
+				source = "user";
+				initPhase = 0;
+				animPeriod = 1;
+				displayName = "Lower tailgate";
+			};
 			class bedseat_fold {
 				lockCargo[] = {};
 				lockCargoAnimationPhase = 1;
@@ -690,30 +798,50 @@ class CfgVehicles {
 				initPhase = 0;
 				animPeriod = 1;
 				displayName = "Enable cargo mode";
-				onPhaseChanged = "(_this select 0) enableVehicleCargo ((_this select 1)==1); (_this select 0) animateSource ['bedseat_fold',(_this select 1),is3den];";
+				onPhaseChanged = "(_this select 0) enableVehicleCargo ((_this select 1)==1); (_this select 0) animateSource ['bedseat_fold',(_this select 1),true];";
+				forceAnimatePhase = 0;
+				forceAnimate[] = {"bedside_left1_fold",0,"bedside_left2_fold",0,"bedside_right1_fold",0,"bedside_right2_fold",0};
 			};
 			class cargo_cover_hide {
 				displayName = "Store cargo cover";
 				source = "user";
 				initPhase = 0;
 				animPeriod = 3;
-				onPhaseChanged = "(_this select 0) animateSource ['cargo_cover_hide',(_this select 1),is3den];";
+				onPhaseChanged = "(_this select 0) animateSource ['cargo_cover_hide',(_this select 1),true];";
+				forceAnimatePhase = 0;
+				forceAnimate[] = {"bedside_left1_fold",0,"bedside_left2_fold",0,"bedside_right1_fold",0,"bedside_right2_fold",0};
+			};
+			class bedside_left1_fold {
+				source = "user";
+				initPhase = 0;
+				animPeriod = 1;
+				displayName = "Lower front left bed side";
+				onPhaseChanged = "if ((_this select 1)==1) then {(_this select 0) animateSource ['cargo_cover_hide',1,true]; [(_this select 0),true,true] call vurtual_mtvr_fnc_cargobed;};";
+			};
+			class bedside_left2_fold: bedside_left1_fold {
+				displayName = "Lower rear left bed side";
+			};
+			class bedside_right1_fold: bedside_left1_fold {
+				displayName = "Lower front right bed side";
+			};
+			class bedside_right2_fold: bedside_left1_fold {
+				displayName = "Lower rear right bed side";
 			};
 		};
-		hasGunner = false;
 		transportMaxBackpacks = 25;
 	};
 	class vurtual_mtvr_mk23: vurtual_MTVRBase_Passenger {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_mk23.p3d";
 		displayname = "MTVR Mk 23 Cargo";
-		VIVPassengers[] = {4,5,6,7,8,9,10,11,12,13};
-		VIVGunners[] = {0,1};
+		VIVPassengers[] = {4,5,6,7,8,9,10,11,12,13}; //3 is front passenger
+		VIVGunners[] = {1,2}; //0 is hatch gunner
 		class Turrets: Turrets {
-			class CargoTurret_01: CargoTurret_01 {
+			class CargoTurret_01: CargoTurret_01 {};
+			class CargoTurret_02: CargoTurret_02 {
 				proxyIndex = 13;
 			};
-			class CargoTurret_02: CargoTurret_02 {
+			class CargoTurret_03: CargoTurret_03 {
 				proxyIndex = 14;
 			};
 		};
@@ -723,7 +851,7 @@ class CfgVehicles {
 		};
 		class AnimationSources: AnimationSources {
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {0,1,4,5,6,7,8,9,10,11,12,13};
+				lockCargo[] = {1,2,4,5,6,7,8,9,10,11,12,13};
 			};
 		};
 
@@ -733,15 +861,16 @@ class CfgVehicles {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_4x4.p3d";
 		displayname = "MTVR 4x4 Short Bed Cargo";
-		VIVPassengers[] = {4,5,6,7,8,9};
-		VIVGunners[] = {0,1};
-		cargoProxyIndexes[] = {1,2,3,4,5,6,7,8};
-		transportSoldier = 8;
+		VIVPassengers[] = {4,5,6,7,8,9}; //3 is front passenger
+		VIVGunners[] = {1,2}; //0 is hatch gunner
+		cargoProxyIndexes[] = {2,3,4,5,6,7,8};
+		transportSoldier = 7;
 		class Turrets: Turrets {
-			class CargoTurret_01: CargoTurret_01 {
+			class CargoTurret_01: CargoTurret_01 {};
+			class CargoTurret_02: CargoTurret_02 {
 				proxyIndex = 9;
 			};
-			class CargoTurret_02: CargoTurret_02 {
+			class CargoTurret_03: CargoTurret_03 {
 				proxyIndex = 10;
 			};
 		};
@@ -751,7 +880,7 @@ class CfgVehicles {
 		};
 		class AnimationSources: AnimationSources {
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {0,1,4,5,6,7,8,9};
+				lockCargo[] = {1,2,4,5,6,7,8,9};
 			};
 		};
 		class VehicleTransport: VehicleTransport {
@@ -759,47 +888,25 @@ class CfgVehicles {
 				maxLoadMass                 = 9475;
 			};
 		};
-		numberPhysicalWheels=4;
-		class Wheels {
-			class LF: MTVRBaseWheel {
-				boneName = "wheel_1_1_damper";
-				steering = 1;
-				side = "left";
-				center   = "wheel_1_1_axis";
-				boundary = "wheel_1_1_bound";
-				suspForceAppPointOffset = "wheel_1_1_axis";
-				tireForceAppPointOffset = "wheel_1_1_axis";
-				WHEEL_SPRINGS(9893,4,WHEEL_STRENGTH,WHEEL_DAMPER)
-			};
-			class LR : LF
-			{
-				boneName = "wheel_1_2_damper";
-				steering = 0;
-				center   = "wheel_1_2_axis";
-				boundary = "wheel_1_2_bound";
-				suspForceAppPointOffset = "wheel_1_2_axis";
-				tireForceAppPointOffset = "wheel_1_2_axis";
-				maxHandBrakeTorque = 3000;		
-			};
-			class RF : LF
-			{
-				boneName = "wheel_2_1_damper";
-				center   = "wheel_2_1_axis";
-				boundary = "wheel_2_1_bound";
-				suspForceAppPointOffset = "wheel_2_1_axis";
-				tireForceAppPointOffset = "wheel_2_1_axis";
-				side = "right";
-			};
-			class RR : RF
-			{
-				boneName = "wheel_2_2_damper";
-				steering = 0;
-				center   = "wheel_2_2_axis";
-				boundary = "wheel_2_2_bound";
-				suspForceAppPointOffset = "wheel_2_2_axis";
-				tireForceAppPointOffset = "wheel_2_2_axis";
-				maxHandBrakeTorque = 3000;			
+		MTVR_WHEELS_4(9893)
+	};
+	class vurtual_mtvr_mk23_flatbed: vurtual_MTVRBase_Flatbed {
+		scope = 2;
+		model = "\vurtual_mtvr\mtvr_mk23.p3d";
+		displayname = "MTVR Mk 23 Flatbed";
+	};
+	class vurtual_mtvr_4x4_flatbed: vurtual_MTVRBase_Flatbed {
+		scope = 2;
+		model = "\vurtual_mtvr\mtvr_4x4.p3d";
+		displayname = "MTVR 4x4 Short Flatbed";
+		class Library {
+			libTextDesc = "4x4 Short Bed Flatbed";
+		};
+		class VehicleTransport: VehicleTransport {
+			class Carrier: Carrier {
+				maxLoadMass                 = 9475;
 			};
 		};
+		MTVR_WHEELS_4(9893)
 	};
 };
