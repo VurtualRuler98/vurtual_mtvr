@@ -311,6 +311,7 @@ class CfgVehicles {
 		};
 		castDriverShadow = "false";
 		driverAction = "driver_offroad01";
+		driverInAction = "driver_offroad01"; //Fixes hideProxyInCombat driver bug
 		cargoAction[] = {"passenger_generic01_foldhands", "passenger_generic01_foldhands", "passenger_generic01_foldhands", "passenger_generic01_foldhands"};
 		
 		// threat (VSoft, VArmor, VAir), how threatening vehicle is to unit types
@@ -451,10 +452,6 @@ class CfgVehicles {
 			};
 
 		};
-		//more buttfix
-		hideWeaponsCargo = 1;
-		LODTurnedIn=1200;
-		LODTurnedOut=1;
 		
 		
 		#include "sounds.hpp"
@@ -466,38 +463,43 @@ class CfgVehicles {
 				effect = "ExhaustEffectOffroad";
 			};
 		};
+		hideProxyInCombat = 1; //MAGIC BUTT FIX
+		forceHideDriver = 1;
+		viewDriverInExternal = 1;
 		class CargoTurret;
 		class Turrets {
 			class CargoTurret_01: CargoTurret {
 				gunnerAction = "passenger_flatground_4_vehicle_passenger_stand_1";
-				gunnerInAction = "passenger_generic01_foldhands";
+				gunnerInAction="passenger_apc_narrow_generic01";
 				gunnerForceOptics=0;
 				hideWeaponsGunner = 0;
-				memoryPointGunnerOptics = "gunnerview";
 				LODTurnedIn = 1200;
 				gunnerOpticsModel = "";
 				stabilizedInAxes = 0;
 				enabledByAnimationSource="Roof_Hatch";
+				commanding = 1; //fixes seat switching
 				canHideGunner= 1;
+				disableSoundAttenuation = 0;
 				forceHideGunner=0;
 				allowLauncherIn=0;
 				allowLauncherOut=1;
+				showAsCargo = true;
+				isCopilot = 1; //makes getting in work properly
 				memoryPointsGetInGunner = "pos codriver";
 				memoryPointsGetInGunnerDir = "pos codriver dir";
 				animationSourceHatch = "Roof_Hatch";
 				gunnerGetInAction = "GetInHigh";
 				gunnerGetOutAction = "GetOutHigh";
-				gunnerName = "Hatch Gunner";
+				gunnerName = "Passenger (Roof Hatch)";
 				gunnerCompartments = "Compartment1";
 				proxyIndex = 1;
-				//gunnerFireAlsoInInternalCamera = 0;
 				isPersonTurret = 1;
 				inGunnerMayFire = 0;
 				outGunnerMayFire = 1;
-				maxElev = 90;
-				minElev = -30;
-				maxTurn = 90;
-				minTurn = -90;
+				maxOutElev = 75;
+				minOutElev = -35;
+				maxOutTurn = 90;
+				minOutTurn = -90;
 			};
 		};
 		/*class Turrets : Turrets {
@@ -765,18 +767,23 @@ class CfgVehicles {
 			class CargoTurret_01: CargoTurret_01 {};
 			class CargoTurret_02: CargoTurret {
 				gunnerAction = "passenger_inside_2";
+				gunnerInAction = "passenger_inside_2"; //fixes standing up in steat
 				memoryPointsGetInGunner = "pos cargo";
 				memoryPointsGetInGunnerDir = "pos cargo dir";
 				gunnerName = "$STR_A3_TURRETS_CARGOTURRET_L";
 				gunnerCompartments = "Compartment2";
 				proxyIndex = 13;
 				isPersonTurret = 1;
-				maxElev = 90;
+				forceHideGunner=1; //fixes being turned out in seat
+				maxElev = 75;
 				minElev = -30;
 				maxTurn = 15;
 				minTurn = -95;
+				stabilizedInAxes=0;
 			};
 			class CargoTurret_03: CargoTurret_02 {
+				memoryPointsGetInGunner = "pos tailgate";
+				memoryPointsGetInGunnerDir = "pos tailgate dir";
 				proxyIndex = 14;
 				maxTurn = 95;
 				minTurn = -15;
@@ -834,8 +841,8 @@ class CfgVehicles {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_mk23.p3d";
 		displayname = "MTVR Mk 23 Cargo";
-		VIVPassengers[] = {4,5,6,7,8,9,10,11,12,13}; //3 is front passenger
-		VIVGunners[] = {1,2}; //0 is hatch gunner
+		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12}; //2 is front passenger
+		VIVGunners[] = {0,1}; //-1 is hatch gunner
 		class Turrets: Turrets {
 			class CargoTurret_01: CargoTurret_01 {};
 			class CargoTurret_02: CargoTurret_02 {
@@ -851,7 +858,7 @@ class CfgVehicles {
 		};
 		class AnimationSources: AnimationSources {
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {1,2,4,5,6,7,8,9,10,11,12,13};
+				lockCargo[] = {0,1,3,4,5,6,7,8,9,10,11,12}; //-1 is hatch gunner, 2 is front passenger
 			};
 		};
 
@@ -861,8 +868,8 @@ class CfgVehicles {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_4x4.p3d";
 		displayname = "MTVR 4x4 Short Bed Cargo";
-		VIVPassengers[] = {4,5,6,7,8,9}; //3 is front passenger
-		VIVGunners[] = {1,2}; //0 is hatch gunner
+		VIVPassengers[] = {3,4,5,6,7,8}; //2 is front passenger
+		VIVGunners[] = {0,1}; //-1 is hatch gunner
 		cargoProxyIndexes[] = {2,3,4,5,6,7,8};
 		transportSoldier = 7;
 		class Turrets: Turrets {
@@ -880,7 +887,7 @@ class CfgVehicles {
 		};
 		class AnimationSources: AnimationSources {
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {1,2,4,5,6,7,8,9};
+				lockCargo[] = {0,1,3,4,5,6,7,8}; //-1 is hatch gunner, 2 is front passenger
 			};
 		};
 		class VehicleTransport: VehicleTransport {
