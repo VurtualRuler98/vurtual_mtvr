@@ -780,6 +780,7 @@ class CfgVehicles {
 				maxTurn = 15;
 				minTurn = -95;
 				stabilizedInAxes=0;
+				commanding = 1; //fixes seat switching
 			};
 			class CargoTurret_03: CargoTurret_02 {
 				memoryPointsGetInGunner = "pos tailgate";
