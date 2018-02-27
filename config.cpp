@@ -265,9 +265,15 @@ class CfgVehicles {
 				initPhase = 0;
 				animPeriod = 0.1;
 			};
+			class cab_transported {
+				source = "user";
+				initPhase = 0;
+				animPeriod = 1;
+			};
 		};
 		class VehicleTransport {
 			class Cargo {
+				dimensions[]				= {"VTV_Cargo_Base","VTV_Cargo_Corner"};
 				parachuteClass				= "B_Parachute_02_F";
 				canBeTransported            = 1;
 				parachuteHeightLimit		= 10;
