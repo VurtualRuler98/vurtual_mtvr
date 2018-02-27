@@ -14,4 +14,4 @@ _veh addAction ["Store cargo cover",{(_this select 0) animateSource ["cargo_cove
 ["Raise/Lower front right bed side","bedside_right1_fold","bedside_right1"],
 ["Raise/Lower rear right bed side","bedside_right2_fold","bedside_right2"]
 ];
-_veh addAction ["Raise/Lower tailgate",{(_this select 0) animateSource ["tailgate_fold",(abs (((_this select 0) animationSourcePhase "tailgate_fold")-1))];},[_x select 1],1.5,false,true,"","(alive _target) && (vehicle _this == _this)",5,false,"sides"];
+_veh addAction ["Raise/Lower tailgate",{(_this select 0) animateDoor ["tailgate_fold",(abs (((_this select 0) animationSourcePhase "tailgate_fold")-1))];},[_x select 1],1.5,false,true,"","(alive _target) && (vehicle _this == _this)",5,false,"sides"];

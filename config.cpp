@@ -265,6 +265,13 @@ class CfgVehicles {
 				initPhase = 0;
 				animPeriod = 0.1;
 			};
+			class Door_Left {
+				source = "door";
+				initPhase = 0;
+				animPeriod = 0.4;
+			};
+			class Door_Right: Door_Left {
+			};
 			class cab_transported {
 				source = "user";
 				initPhase = 0;
@@ -292,6 +299,8 @@ class CfgVehicles {
 				parachuteHeightLimitDefault = 10000;
 			};
 		};
+		driverDoor = "door_left";
+		cargoDoors[] = {"door_right","tailgate_fold"};
 		class textureSources {
 			class woodland {
 				displayname = "Woodland";
@@ -475,6 +484,7 @@ class CfgVehicles {
 		class CargoTurret;
 		class Turrets {
 			class CargoTurret_01: CargoTurret {
+				gunnerDoor = "door_right";
 				gunnerAction = "passenger_flatground_4_vehicle_passenger_stand_1";
 				gunnerInAction="passenger_apc_narrow_generic01";
 				gunnerForceOptics=0;
@@ -538,18 +548,22 @@ class CfgVehicles {
 		class HitPoints : HitPoints {
 			class HitGlass1 : HitGlass1 {
 				armor = 0.1;
+				name = "glass1_viv";
 			};
 			
 			class HitGlass2 : HitGlass2 {
 				armor = 0.1;
+				name = "glass2_viv";
 			};
 			
 			class HitGlass3 : HitGlass3 {
 				armor = 0.1;
+				name = "glass3_viv";
 			};
 			
 			class HitGlass4 : HitGlass4 {
 				armor = 0.1;
+				name = "glass4_viv";
 			};
 			
 			class HitLFWheel : HitLFWheel {
@@ -658,7 +672,7 @@ class CfgVehicles {
 		numberPhysicalWheels=8;
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_lhs16.p3d";
-		displayname = "MTVR LHS 16-Ton";
+		displayname = "MTVR 16.5-Ton LHS";
 		class VehicleTransport: VehicleTransport {
 			class Carrier: Carrier {
 				cargoSpacing[]              = {0, 0, 0};
@@ -668,7 +682,7 @@ class CfgVehicles {
 			};
 		};
 		class Library {
-			libTextDesc = "MTVR LHS 16-Ton";
+			libTextDesc = "MTVR 16.5-Ton LHS";
 		};
 		class Wheels {
 			class LF: MTVRBaseWheel {
@@ -772,6 +786,7 @@ class CfgVehicles {
 		class Turrets: Turrets {
 			class CargoTurret_01: CargoTurret_01 {};
 			class CargoTurret_02: CargoTurret {
+				gunnerDoor = "tailgate_fold";
 				gunnerAction = "passenger_inside_2";
 				gunnerInAction = "passenger_inside_2"; //fixes standing up in steat
 				memoryPointsGetInGunner = "pos cargo";
@@ -800,10 +815,11 @@ class CfgVehicles {
 		animationList[] =  {"brakelight_normal_hide",0,"blackout_hide",1,"bedseat_fold",0,"cargo_cover_hide",0};
 		class AnimationSources: AnimationSources {
 			class tailgate_fold {
-				source = "user";
+				source = "door";
 				initPhase = 0;
-				animPeriod = 1;
+				animPeriod = 0.5;
 				displayName = "Lower tailgate";
+				onPhaseChanged = "(_this select 0) animateDoor ['tailgate_fold',(_this select 1),true]";
 			};
 			class bedseat_fold {
 				lockCargo[] = {};
