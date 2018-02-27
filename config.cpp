@@ -288,7 +288,7 @@ class CfgVehicles {
 			class Carrier {
 				cargoBayDimensions[]        = {"VTV_Carrier_Base", "VTV_Carrier_Corner"};
 				cargoSpacing[]              = {0, 0, 0};
-				cargoAlignment[]            = {"front","left"};
+				cargoAlignment[]            = {"front","center"};
 				maxLoadMass                 = 15558;
 				disableHeightLimit			= 1;
 				exits[]						= {"VTV_exit_1"};
@@ -676,7 +676,7 @@ class CfgVehicles {
 		class VehicleTransport: VehicleTransport {
 			class Carrier: Carrier {
 				cargoSpacing[]              = {0, 0, 0};
-				cargoAlignment[]            = {"front","center"};
+				cargoAlignment[]            = {"front","left"};
 				maxLoadMass                 = 19233;
 				disableHeightLimit			= 1;
 			};

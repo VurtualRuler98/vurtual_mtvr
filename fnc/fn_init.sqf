@@ -20,7 +20,8 @@ if (isServer) then {
 					if (isNull isVehicleCargo _veh) then { //If we're not being transported...
 						_veh animateSource ["cab_transported",0]; //Unfold ourselves.
 					} else { //otherwise we're being transported, check if we fit unfolded.
-						if ((isVehicleCargo _veh) isKindOf "CUP_C130J_Base") then { //CUP C-130's volume is too high.
+						_parent = (isVehicleCargo _veh);
+						if (({(_parent) isKindOf _x} count ["sab_C130_J_Base","CUP_C130J_Base"])>0) then { //Some have extra big cargo areas.
 							_veh animateSource ["cab_transported",1,true]; //Fold anyway, it's authentic.
 						} else { //otherwise check manually
 							_memPoints =  getArray (configFile >> "CfgVehicles" >> (typeOf (isVehicleCargo _veh)) >> "VehicleTransport" >> "Carrier" >> "cargoBayDimensions"); //Get the cargo bay size of our transport.
