@@ -864,6 +864,7 @@ class CfgVehicles {
 	};
 	class vurtual_mtvr_mk23: vurtual_MTVRBase_Passenger {
 		scope = 2;
+		turnCoef = 2;
 		model = "\vurtual_mtvr\mtvr_mk23.p3d";
 		displayname = "MTVR Mk 23 Cargo";
 		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12}; //2 is front passenger
@@ -892,6 +893,7 @@ class CfgVehicles {
 	class vurtual_mtvr_4x4: vurtual_MTVRBase_Passenger {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_4x4.p3d";
+		turnCoef = 2;
 		displayname = "MTVR 4x4 Short Bed Cargo";
 		VIVPassengers[] = {3,4,5,6,7,8}; //2 is front passenger
 		VIVGunners[] = {0,1}; //-1 is hatch gunner
@@ -924,11 +926,13 @@ class CfgVehicles {
 	};
 	class vurtual_mtvr_mk23_flatbed: vurtual_MTVRBase_Flatbed {
 		scope = 2;
+		turnCoef = 2;
 		model = "\vurtual_mtvr\mtvr_mk23.p3d";
 		displayname = "MTVR Mk 23 Flatbed";
 	};
 	class vurtual_mtvr_4x4_flatbed: vurtual_MTVRBase_Flatbed {
 		scope = 2;
+		turnCoef = 2;
 		model = "\vurtual_mtvr\mtvr_4x4.p3d";
 		displayname = "MTVR 4x4 Short Flatbed";
 		class Library {
@@ -946,6 +950,7 @@ class CfgVehicles {
 		model = "\vurtual_mtvr\mtvr_mk27.p3d";
 		displayname = "MTVR Mk 27 Extended Cargo";
 		transportSoldier = 19;
+		turnCoef = 2;
 		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //2 is front passenger
 		VIVGunners[] = {0,1}; //-1 is hatch gunner
 		class Turrets: Turrets {
@@ -974,6 +979,7 @@ class CfgVehicles {
 	};
 	class vurtual_mtvr_mk27_flatbed: vurtual_MTVRBase_Flatbed {
 		scope = 2;
+		turnCoef = 2;
 		model = "\vurtual_mtvr\mtvr_mk27.p3d";
 		displayname = "MTVR Mk 27 Extended Flatbed";
 		
