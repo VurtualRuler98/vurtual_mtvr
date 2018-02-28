@@ -87,7 +87,9 @@ class CfgPatches {
 			"vurtual_mtvr_mk23_flatbed",
 			"vurtual_mtvr_lhs16",
 			"vurtual_mtvr_4x4",
-			"vurtual_mtvr_4x4_flatbed"
+			"vurtual_mtvr_4x4_flatbed",
+			"vurtual_mtvr_mk27",
+			"vurtual_mtvr_mk27_flatbed"
 			};
 		weapons[] = {};
 		requiredVersion = 0.1;
@@ -288,7 +290,7 @@ class CfgVehicles {
 			class Carrier {
 				cargoBayDimensions[]        = {"VTV_Carrier_Base", "VTV_Carrier_Corner"};
 				cargoSpacing[]              = {0, 0, 0};
-				cargoAlignment[]            = {"front","center"};
+				cargoAlignment[]            = {"front","left"};
 				maxLoadMass                 = 15558;
 				disableHeightLimit			= 1;
 				exits[]						= {"VTV_exit_1"};
@@ -676,7 +678,7 @@ class CfgVehicles {
 		class VehicleTransport: VehicleTransport {
 			class Carrier: Carrier {
 				cargoSpacing[]              = {0, 0, 0};
-				cargoAlignment[]            = {"front","left"};
+				cargoAlignment[]            = {"front","center"};
 				maxLoadMass                 = 19233;
 				disableHeightLimit			= 1;
 			};
@@ -938,5 +940,49 @@ class CfgVehicles {
 			};
 		};
 		MTVR_WHEELS_4(9893)
+	};
+	class vurtual_mtvr_mk27: vurtual_MTVRBase_Passenger {
+		scope = 2;
+		model = "\vurtual_mtvr\mtvr_mk27.p3d";
+		displayname = "MTVR Mk 27 Extended Cargo";
+		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //2 is front passenger
+		VIVGunners[] = {0,1}; //-1 is hatch gunner
+		class Turrets: Turrets {
+			class CargoTurret_01: CargoTurret_01 {};
+			class CargoTurret_02: CargoTurret_02 {
+				proxyIndex = 21;
+			};
+			class CargoTurret_03: CargoTurret_03 {
+				proxyIndex = 22;
+			};
+		};
+		
+		class Library {
+			libTextDesc = "Mk27 Extended Cargo";
+		};
+		class AnimationSources: AnimationSources {
+			class bedseat_fold: bedseat_fold {
+				lockCargo[] = {0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //-1 is hatch gunner, 2 is front passenger
+			};
+		};
+		class VehicleTransport: VehicleTransport {
+			class Carrier: Carrier {
+				maxLoadMass                 = 14333;
+			};
+		};
+	};
+	class vurtual_mtvr_mk27_flatbed: vurtual_MTVRBase_Flatbed {
+		scope = 2;
+		model = "\vurtual_mtvr\mtvr_mk27.p3d";
+		displayname = "MTVR Mk 27 Extended Flatbed";
+		
+		class Library {
+			libTextDesc = "Mk27 Extended Flatbed";
+		};
+		class VehicleTransport: VehicleTransport {
+			class Carrier: Carrier {
+				maxLoadMass                 = 14333;
+			};
+		};
 	};
 };
