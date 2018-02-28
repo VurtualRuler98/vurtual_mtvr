@@ -945,6 +945,7 @@ class CfgVehicles {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_mk27.p3d";
 		displayname = "MTVR Mk 27 Extended Cargo";
+		transportSoldier = 19;
 		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //2 is front passenger
 		VIVGunners[] = {0,1}; //-1 is hatch gunner
 		class Turrets: Turrets {
