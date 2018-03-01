@@ -86,6 +86,7 @@ class CfgPatches {
 			"vurtual_mtvr_mk23",
 			"vurtual_mtvr_mk23_flatbed",
 			"vurtual_mtvr_lhs16",
+			"vurtual_mtvr_lhs16_boxloader",
 			"vurtual_mtvr_4x4",
 			"vurtual_mtvr_4x4_flatbed",
 			"vurtual_mtvr_mk27",
@@ -674,7 +675,7 @@ class CfgVehicles {
 		numberPhysicalWheels=8;
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_lhs16.p3d";
-		displayname = "MTVR 16.5-Ton LHS";
+		displayname = "MTVR 16.5-Ton LHS (Legacy)";
 		class VehicleTransport: VehicleTransport {
 			class Carrier: Carrier {
 				cargoSpacing[]              = {0, 0, 0};
@@ -780,7 +781,29 @@ class CfgVehicles {
 				cargoAlignment[]            = {"front","left"};
 			};
 		};
-	};	
+	};
+	class vurtual_mtvr_lhs16_boxloader: vurtual_mtvr_lhs16 {
+		displayname = "MTVR 16.5-Ton LHS (Boxloader)";
+		class VehicleTransport {
+			class Cargo {
+				dimensions[]				= {"VTV_Cargo_Base","VTV_Cargo_Corner"};
+				parachuteClass				= "B_Parachute_02_F";
+				canBeTransported            = 1;
+				parachuteHeightLimit		= 10;
+			};
+		};
+		class EventHandlers {
+			init = "(_this select 0) setVariable ['boxloader_flatrack_carrier',true];_this call vurtual_mtvr_fnc_init";
+			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
+		};
+		class animationSources: animationSources {
+			class flatrack_hide {
+				source = "user";
+				initPhase = 1;
+				animPeriod = 1;
+			};
+		};
+	};
 	class vurtual_MTVRBase_Passenger: vurtual_MTVRBase {
 		VIVPassengers[] = {};
 		VIVGunners[] = {};
