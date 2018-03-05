@@ -793,7 +793,7 @@ class CfgVehicles {
 			};
 		};
 		class EventHandlers {
-			init = "(_this select 0) setVariable ['boxloader_flatrack_carrier',true];_this call vurtual_mtvr_fnc_init";
+			init = "_this call vurtual_mtvr_fnc_init";
 			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
 		};
 		class animationSources: animationSources {

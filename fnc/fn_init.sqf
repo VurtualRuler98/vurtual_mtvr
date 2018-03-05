@@ -6,7 +6,14 @@ _veh setVariable ["mtvr_init",true];
 _veh addAction ["Lights: Blackout",{_veh = (_this select 0);_veh animateSource ["blackout_hide",0]; _veh animateSource ["brakelight_normal_hide",1];},[],1.5,false,true,"","(alive _target) && !(isLightOn _target) && (driver _target == _this) && (_target animationSourcePhase 'blackout_hide')==1"];
 _veh addAction ["Lights: Stoplight",{_veh = (_this select 0); _veh animateSource ["blackout_hide",1]; _veh animateSource ["brakelight_normal_hide",0];},[],1.5,false,true,"","(alive _target) && !(isLightOn _target) && (driver _target == _this) && (_target animationSourcePhase 'brakelight_normal_hide')==1"];
 _veh addAction ["Lights: None",{_veh = (_this select 0); _veh animateSource ["blackout_hide",1]; _veh animateSource ["brakelight_normal_hide",1];},[],1.5,false,true,"","(alive _target) && !(isLightOn _target) && (driver _target == _this) && ((_target animationSourcePhase 'brakelight_normal_hide')==0 || (_target animationSourcePhase 'blackout_hide')==0)"];
+
+
 if (_veh isKindOf "vurtual_MTVRBase_Passenger") then {[_veh] call vurtual_mtvr_fnc_passenger;};
+
+if ((isClass(configFile >> "CfgPatches" >> "Boxloader")) && (_veh isKindOf "vurtual_mtvr_lhs16_boxloader")) then {
+	[_veh] call boxloader_fnc_init_pls;
+};
+
 if (isServer) then {
 	[_veh] spawn {
 		_veh = (_this select 0);
