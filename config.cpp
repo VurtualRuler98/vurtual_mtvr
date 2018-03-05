@@ -268,6 +268,13 @@ class CfgVehicles {
 				initPhase = 0;
 				animPeriod = 0.1;
 			};
+			class apk_cab {
+				displayName = "Install Armor Protection Kit (Cab)";
+				source = "user";
+				initPhase = 0;
+				animPeriod = 0.01;
+				mass = 500; //random pick
+			};
 			class Door_Left {
 				source = "door";
 				initPhase = 0;
