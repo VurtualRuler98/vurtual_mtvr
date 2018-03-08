@@ -107,6 +107,7 @@ class CfgFunctions {
 			class init {};
 			class passenger {};
 			class cargobed {};
+			class hazmat_cycle {};
 		};
 	};
 };
@@ -178,7 +179,7 @@ class CfgVehicles {
 		};
 	};
 	
-	class vurtual_MTVRBase : Car_F {
+	class vurtual_MTVRBase: Car_F {
 		slingLoadCargoMemoryPoints[] = { "SlingLoadCargo1","SlingLoadCargo2","SlingLoadCargo3","SlingLoadCargo4"};
 		class SpeechVariants {
 			class Default {
@@ -243,8 +244,8 @@ class CfgVehicles {
 		soundEnviron[] = {"", 0.562341, 1};
 		transportMaxBackpacks = 50;
 		transportSoldier = 11;
-		hiddenSelections[] = {"camo1","camo2","cargo_tarp"};
-		hiddenSelectionsTextures[] = {"vurtual_mtvr\data\mtvr_body_co.paa","vurtual_mtvr\data\mtvr_body2_co.paa","vurtual_mtvr\data\mtvr_tarp_co.paa"};
+		hiddenSelections[] = {"camo1","camo2","cargo_tarp","sign"};
+		hiddenSelectionsTextures[] = {"vurtual_mtvr\data\mtvr_body_co.paa","vurtual_mtvr\data\mtvr_body2_co.paa","vurtual_mtvr\data\mtvr_tarp_co.paa","vurtual_mtvr\Data\hazmat\flammable_ca.paa"};
 		animationList[] = {"brakelight_normal_hide",0,"blackout_hide",1};
 		class AnimationSources: AnimationSources {
 			class brakelight_normal_hide {
@@ -279,6 +280,12 @@ class CfgVehicles {
 				source = "user";
 				initPhase = 0;
 				animPeriod = 1;
+			};
+			class sign_hide {
+				displayName = "Hide HAZMAT sign";
+				source = "user";
+				initPhase = 1;
+				animPeriod = 0.01;
 			};
 		};
 		class VehicleTransport {

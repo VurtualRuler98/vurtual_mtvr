@@ -8,6 +8,16 @@ _veh addAction ["Lights: Stoplight",{_veh = (_this select 0); _veh animateSource
 _veh addAction ["Lights: None",{_veh = (_this select 0); _veh animateSource ["blackout_hide",1]; _veh animateSource ["brakelight_normal_hide",1];},[],1.5,false,true,"","(alive _target) && !(isLightOn _target) && (driver _target == _this) && ((_target animationSourcePhase 'brakelight_normal_hide')==0 || (_target animationSourcePhase 'blackout_hide')==0)"];
 
 
+//HAZMAT part
+_veh addAction ["Cycle HAZMAT Sign",{
+	[(_this select 0)] call vurtual_mtvr_fnc_hazmat_cycle;
+},[_hazmat_signs],1.5,false,true,"","(alive _target) && (vehicle _this == _this) && (_target animationSourcePhase 'sign_hide')==0",15,false,"sign_action"];
+
+_veh addAction ["Toggle HAZMAT Sign",{
+	(_this select 0) animateSource ["sign_hide",(abs (((_this select 0) animationSourcePhase "sign_hide")-1))];
+},[_x select 1],1.5,false,true,"","(alive _target) && (vehicle _this == _this)",5,false,"cover_action"];
+
+
 if (_veh isKindOf "vurtual_MTVRBase_Passenger") then {[_veh] call vurtual_mtvr_fnc_passenger;};
 
 if ((isClass(configFile >> "CfgPatches" >> "Boxloader")) && (_veh isKindOf "vurtual_mtvr_lhs16_boxloader")) then {
