@@ -10,7 +10,7 @@ _veh addAction ["Lights: None",{_veh = (_this select 0); _veh animateSource ["bl
 
 _veh addAction ["Load vehicle",{
 	(_this select 0) setVehicleCargo (vehicle (_this select 1));
-},[],1.5,false,true,"","!boxloader_maxload_enabled && (_target canVehicleCargo vehicle _this) select 0 && ((vehicle _this distance _target)<15) && ([(_target modeltoworld (_target selectionPosition 'VTV_exit_1')),(getDir _target+180),30,position vehicle _this] call bis_fnc_inAngleSector)"];
+},[],1.5,false,true,"","!boxloader_maxload_enabled && (_this != vehicle _this) && (_this == driver vehicle _this) && (_target canVehicleCargo vehicle _this) select 0 && ((vehicle _this distance _target)<15) && ([(_target modeltoworld (_target selectionPosition 'VTV_exit_1')),(getDir _target+180),30,position vehicle _this] call bis_fnc_inAngleSector)"];
 
 //HAZMAT part
 _veh addAction ["Cycle HAZMAT Sign",{
@@ -36,8 +36,11 @@ if (isServer) then {
 		_veh = (_this select 0);
 		while {alive (_veh)} do {
 			sleep 0.1;
-			if (isEngineOn _veh && ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0)) then {
+			if (isNull attachedTo _veh && ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0)) then {
 				_veh setHitPointDamage ["hitEngine",(_veh getHitPointDamage "hitEngine")+0.0025];
+			};
+			if (isNull attachedTo _veh && ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_kill"))) select 2 < 0)) then {
+				_veh setHitPointDamage ["hitEngine",1];
 			};
 			if ((isLightOn _veh) && ((_veh animationSourcePhase 'blackout_hide')==0 || (_veh animationSourcePhase 'brakelight_normal_hide')==1)) then {
 				_veh animateSource ["brakelight_normal_hide",0];

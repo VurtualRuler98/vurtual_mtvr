@@ -383,7 +383,7 @@ class CfgVehicles {
 		changeGearMinEffectivity[] = {0.95, 0.15, 0.85, 0.85, 0.85, 0.85, 0.85,0.85,0.85};
 		switchTime = 0.1;
 		latency = 1;
-		maxFordingDepth=3; // 1.54 soft depth (1.524)
+		maxFordingDepth=1000; // 1.524m soft depth, 3m kill depth
 		numberPhysicalWheels=6;
 		class MTVRBaseWheel {
 			//boneName = "wheel_1_1_damper";
