@@ -8,6 +8,10 @@ _veh addAction ["Lights: Stoplight",{_veh = (_this select 0); _veh animateSource
 _veh addAction ["Lights: None",{_veh = (_this select 0); _veh animateSource ["blackout_hide",1]; _veh animateSource ["brakelight_normal_hide",1];},[],1.5,false,true,"","(alive _target) && !(isLightOn _target) && (driver _target == _this) && ((_target animationSourcePhase 'brakelight_normal_hide')==0 || (_target animationSourcePhase 'blackout_hide')==0)"];
 
 
+_veh addAction ["Load vehicle",{
+	(_this select 0) setVehicleCargo (vehicle (_this select 1));
+},[],1.5,false,true,"","!boxloader_maxload_enabled && (_target canVehicleCargo vehicle _this) select 0 && ((vehicle _this distance _target)<15) && ([(_target modeltoworld (_target selectionPosition 'VTV_exit_1')),(getDir _target+180),30,position vehicle _this] call bis_fnc_inAngleSector)"];
+
 //HAZMAT part
 _veh addAction ["Cycle HAZMAT Sign",{
 	[(_this select 0)] call vurtual_mtvr_fnc_hazmat_cycle;
@@ -20,8 +24,11 @@ _veh addAction ["Toggle HAZMAT Sign",{
 
 if (_veh isKindOf "vurtual_MTVRBase_Passenger") then {[_veh] call vurtual_mtvr_fnc_passenger;};
 
-if ((isClass(configFile >> "CfgPatches" >> "Boxloader")) && (_veh isKindOf "vurtual_mtvr_lhs16_boxloader")) then {
-	[_veh] call boxloader_fnc_init_pls;
+if (isClass(configFile >> "CfgPatches" >> "Boxloader")) then {
+	[_veh,"VTV_exit_1"] call boxloader_fnc_driveon;
+	if (_veh isKindOf "vurtual_mtvr_lhs16_boxloader") then {
+		[_veh] call boxloader_fnc_init_pls;
+	};
 };
 
 if (isServer) then {
@@ -29,6 +36,9 @@ if (isServer) then {
 		_veh = (_this select 0);
 		while {alive (_veh)} do {
 			sleep 0.1;
+			if (isEngineOn _veh && ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0)) then {
+				_veh setHitPointDamage ["hitEngine",(_veh getHitPointDamage "hitEngine")+0.0025];
+			};
 			if ((isLightOn _veh) && ((_veh animationSourcePhase 'blackout_hide')==0 || (_veh animationSourcePhase 'brakelight_normal_hide')==1)) then {
 				_veh animateSource ["brakelight_normal_hide",0];
 				_veh animateSource ["blackout_hide",1];

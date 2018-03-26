@@ -303,8 +303,8 @@ class CfgVehicles {
 				disableHeightLimit			= 1;
 				exits[]						= {"VTV_exit_1"};
 				unloadingInterval			= 2;
-				loadingDistance				= 10;
-				loadingAngle				= 60;
+				loadingDistance				= 0;
+				loadingAngle				= 0;
 				parachuteClassDefault       = "B_Parachute_02_F";
 				parachuteHeightLimitDefault = 10000;
 			};
@@ -383,7 +383,7 @@ class CfgVehicles {
 		changeGearMinEffectivity[] = {0.95, 0.15, 0.85, 0.85, 0.85, 0.85, 0.85,0.85,0.85};
 		switchTime = 0.1;
 		latency = 1;
-		maxFordingDepth=1.54;
+		maxFordingDepth=3; // 1.54 soft depth (1.524)
 		numberPhysicalWheels=6;
 		class MTVRBaseWheel {
 			//boneName = "wheel_1_1_damper";
