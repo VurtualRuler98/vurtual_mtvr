@@ -31,16 +31,18 @@ if (isClass(configFile >> "CfgPatches" >> "Boxloader")) then {
 	};
 };
 
-if (isServer) then {
-	[_veh] spawn {
-		_veh = (_this select 0);
-		while {alive (_veh)} do {
-			sleep 0.1;
-			if (isNull attachedTo _veh && ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0)) then {
-				_veh setHitPointDamage ["hitEngine",(_veh getHitPointDamage "hitEngine")+0.0025];
-			};
-			if (isNull attachedTo _veh && ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_kill"))) select 2 < 0)) then {
-				_veh setHitPointDamage ["hitEngine",1];
+[_veh] spawn {
+	_veh = (_this select 0);
+	while {alive (_veh)} do {
+		sleep 0.1;
+		if (local _veh) then {
+			if (isNull attachedTo _veh) then {
+				if ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0) then {
+					_veh setHitPointDamage ["hitEngine",(_veh getHitPointDamage "hitEngine")+0.0025];
+				};
+				if (((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_kill"))) select 2 < 0) &&  ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0)) then { //handles rollovers
+					_veh setHitPointDamage ["hitEngine",1];
+				};
 			};
 			if ((isLightOn _veh) && ((_veh animationSourcePhase 'blackout_hide')==0 || (_veh animationSourcePhase 'brakelight_normal_hide')==1)) then {
 				_veh animateSource ["brakelight_normal_hide",0];

@@ -380,7 +380,19 @@ class CfgVehicles {
 		dampingRateZeroThrottleClutchEngaged = 2.0;
 		dampingRateZeroThrottleClutchDisengaged = 0.35;
 		torqueCurve[] = {{0, "125/165"},{"12/21","165/165"},{"14/21","150/165"},{"16/21","130/165"},{"18/21","125/165"},{"20/21","105/165"},{"21/21","100/165"}};
-		changeGearMinEffectivity[] = {0.95, 0.15, 0.85, 0.85, 0.85, 0.85, 0.85,0.85,0.85};
+		//changeGearMinEffectivity[] = {0.95, 0.15, 0.85, 0.85, 0.85, 0.85, 0.85,0.85,0.85};
+		changeGearOmegaRatios[] = {
+			21/21, 5/21, //R
+			10/21, 0, //N
+			18/21, 5/21, //1
+			17/21, 8/21, //2
+			15/21, 9/21, //3
+			15/21, 11/21, //4
+			14/21, 10/21, //5
+			13/21, 10/21, //6
+			22/21, 11/21  //7
+		};
+		changeGearType = "rpmratio";
 		switchTime = 0.1;
 		latency = 1;
 		maxFordingDepth=1000; // 1.524m soft depth, 3m kill depth
