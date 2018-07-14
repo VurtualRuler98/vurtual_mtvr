@@ -78,6 +78,22 @@ springDamperRate = DAMPER*2*((MASS/WHEELS)*STRENGTH^2*(MASS/WHEELS))^0.5;
 			}; \
 		};
 
+		
+#define MTVR_SELFCLASS(CLASS) class CLASS : CLASS {} ;
+
+#define MTVR_ANIMSOURCE_BASE MTVR_SELFCLASS(brakelight_normal_hide) \
+	MTVR_SELFCLASS(blackout_hide)
+
+	
+#define MTVR_ANIMSOURCE_PASSENGER MTVR_ANIMSOURCE_BASE \
+	MTVR_SELFCLASS(tailgate_fold) \
+	MTVR_SELFCLASS(bedseat_fold) \
+	MTVR_SELFCLASS(cargo_cover_hide) \
+	MTVR_SELFCLASS(bedside_left1_fold) \
+	MTVR_SELFCLASS(bedside_left2_fold) \
+	MTVR_SELFCLASS(bedside_right1_fold) \
+	MTVR_SELFCLASS(bedside_right2_fold) 
+
 class DefaultEventhandlers;	// External class reference
 
 class CfgPatches {
@@ -108,6 +124,7 @@ class CfgFunctions {
 			class passenger {};
 			class cargobed {};
 			class hazmat_cycle {};
+			class turnin {};
 		};
 	};
 };
@@ -149,7 +166,6 @@ class CfgMovesMaleSdr : CfgMovesBasic {
 	};
 };
 
-
 class CfgVehicles {
 	class LandVehicle;
 	
@@ -164,12 +180,17 @@ class CfgVehicles {
 			class MainTurret : NewTurret {};
 			class ViewOptics;
 		};
-		
+		//class ACE_SelfActions;
+		//class ACE_Actions;
 		class HitPoints {
 			class HitLFWheel;	
 			class HitLF2Wheel;	
 			class HitRFWheel;	
-			class HitRF2Wheel;	
+			class HitRF2Wheel;
+			class HitLMWheel;
+			class HitLBWheel;
+			class HitRMWheel;
+			class HitRBWheel;
 			class HitGlass1;	
 			class HitGlass2;	
 			class HitGlass3;	
@@ -210,9 +231,9 @@ class CfgVehicles {
 		antiRollbarSpeedMin = 0;
 		antiRollbarSpeedMax = 20;
 		driverCompartments = "Compartment1";
-		cargoCompartments[] = {"Compartment1","Compartment2"};
-		cargoIsCoDriver[] = {1,0};
-		cargoProxyIndexes[] = {2,3,4,5,6,7,8,9,10,11,12};
+		cargoCompartments[] = {"Compartment2"};
+		cargoIsCoDriver[] = {0};
+		cargoProxyIndexes[] = {3,4,5,6,7,8,9,10,11,12};
 		soundAttenuationCargo[] = {1,0};
 		crewVulnerable = true;
 		ejectDeadCargo = false;
@@ -225,7 +246,7 @@ class CfgVehicles {
 		damperDamping = 1;	// larger number less movement in dampers
 		armor = 80;
 		damageResistance = 0.05;
-		turnCoef = 3;
+		turnCoef = 2;
 		steerAheadPlan = 0.2;
 		steerAheadSimul = 0.4;
 		predictTurnPlan = 0.9;
@@ -243,11 +264,93 @@ class CfgVehicles {
 		soundServo[] = {"A3\sounds_f\dummysound", db-40, 1.0, 10};
 		soundEnviron[] = {"", 0.562341, 1};
 		transportMaxBackpacks = 50;
-		transportSoldier = 11;
+		transportSoldier = 10;
+		/*class ACE_SelfActions: ACE_SelfActions {
+			class vurtual_lights {
+				displayname = "Brake lights";
+				condition = "(alive _target) && !(isLightOn _target) && (driver _target == _player)";
+				statement = "";
+				class lights_off {
+					displayName = "Turn off";
+					statement = "_target animateSource ['blackout_hide',1]; _target animateSource ['brakelight_normal_hide',1]";
+					condition = "(alive _target) && !(isLightOn _target) && (driver _target == _player) && ((_target animationSourcePhase 'brakelight_normal_hide')==0 || (_target animationSourcePhase 'blackout_hide')==0)";	
+				};
+				class lights_blackout {
+					displayName = "Blackout mode";
+					statement = "_target animateSource ['blackout_hide',0]; _target animateSource ['brakelight_normal_hide',1]";
+					condition = "(alive _target) && !(isLightOn _target) && (driver _target == _player) && (_target animationSourcePhase 'blackout_hide')==1";
+				};
+				class lights_stop {
+					displayName = "Normal mode";
+					statement = "_target animateSource ['blackout_hide',1]; _target animateSource ['brakelight_normal_hide',0]";
+					condition = "(alive _target) && !(isLightOn _target) && (driver _target == _player) && (_target animationSourcePhase 'brakelight_normal_hide')==1";
+				};
+			};
+		};
+		class ACE_Actions: ACE_Actions {
+			class vurtual_hazmat {
+				displayName = "Toggle HAZMAT Sign";
+				condition = "(alive _target) && (vehicle _player == _player)";
+				statement = "_target animateSource ['sign_hide',abs ((_target animationSourcePhase 'sign_hide')-1)]";
+				distance = 2;
+				selection = "sign_action";
+				class sign_flammable {
+					displayName = "Flammable";
+					condition = "(_target getVariable ['hazmat_sign',0])!=0";
+					statement = "_target animateSource ['sign_hide',0]; _target setObjectTexture [3,'vurtual_mtvr\Data\hazmat\flammable_ca.paa']; _target setVariable ['hazmat_sign',0,true]";
+				};
+				class sign_explosive {
+					displayName = "Explosive";
+					condition = "(_target getVariable ['hazmat_sign',0])!=1";
+					statement = "_target animateSource ['sign_hide',0]; _target setObjectTexture [3,'vurtual_mtvr\Data\hazmat\explosive_ca.paa']; _target setVariable ['hazmat_sign',1,true]";
+				};
+				class sign_chemical {
+					displayName = "Chemical";
+					condition = "(_target getVariable ['hazmat_sign',0])!=2";
+					statement = "_target animateSource ['sign_hide',0]; _target setObjectTexture [3,'vurtual_mtvr\Data\hazmat\chemical_ca.paa']; _target setVariable ['hazmat_sign',2,true]";
+				};
+				class sign_biohazard {
+					displayName = "Biohazard";
+					condition = "(_target getVariable ['hazmat_sign',1])!=3";
+					statement = "_target animateSource ['sign_hide',0]; _target setObjectTexture [3,'vurtual_mtvr\Data\hazmat\biohazard_ca.paa']; _target setVariable ['hazmat_sign',3,true]";
+				};
+				class sign_radioactive {
+					displayName = "Radioactive";
+					condition = "(_target getVariable ['hazmat_sign',1])!=4";
+					statement = "_target animateSource ['sign_hide',0]; _target setObjectTexture [3,'vurtual_mtvr\Data\hazmat\radioactive_ca.paa']; _target setVariable ['hazmat_sign',4,true]";
+				};
+			};
+		};*/
+		class Damage {
+			tex[] = {};
+			mat[] = {
+				"vurtual_mtvr\Data\mtvr_glassn.rvmat",
+				"A3\data_f\Glass_veh_damage.rvmat",
+				"A3\data_f\Glass_veh_damage.rvmat",
+				
+				"vurtual_mtvr\Data\mtvr_body.rvmat",
+				"vurtual_mtvr\Data\mtvr_body_damage.rvmat",
+				"vurtual_mtvr\Data\mtvr_body_destruct.rvmat",
+				
+				"vurtual_mtvr\Data\mtvr_body2.rvmat",
+				"vurtual_mtvr\Data\mtvr_body2_damage.rvmat",
+				"vurtual_mtvr\Data\mtvr_body2_destruct.rvmat"
+			};
+		};
 		hiddenSelections[] = {"camo1","camo2","cargo_tarp","sign"};
 		hiddenSelectionsTextures[] = {"vurtual_mtvr\data\mtvr_body_co.paa","vurtual_mtvr\data\mtvr_body2_co.paa","vurtual_mtvr\data\mtvr_tarp_co.paa","vurtual_mtvr\Data\hazmat\flammable_ca.paa"};
 		animationList[] = {"brakelight_normal_hide",0,"blackout_hide",1};
-		class AnimationSources: AnimationSources {
+		class AnimationSources {
+			class GunnerTurn {
+				source="user";
+				initPhase=0;
+				animPeriod=0.5;
+			};
+			class window_codriver {
+				source = "door";
+				initPhase = 0;
+				animPeriod = 0.5;
+			};
 			class brakelight_normal_hide {
 				displayName = "Turn normal brake lights off";
 				source = "user";
@@ -287,6 +390,25 @@ class CfgVehicles {
 				initPhase = 1;
 				animPeriod = 0.01;
 			};
+			
+			class HitLFWheel {
+				source = "Hit";
+				hitpoint = "HitLFWheel";
+				raw = 1;
+			};
+			class HitLF2Wheel: HitLFWheel { hitpoint = "HitLF2Wheel"; };
+			class HitLMWheel: HitLFWheel { hitpoint = "HitLMWheel"; };
+			class HitLBWheel: HitLFWheel { hitpoint = "HitLBWheel"; };
+			
+			class HitRFWheel: HitLFWheel { hitpoint = "HitRFWheel"; };
+			class HitRF2Wheel: HitLFWheel { hitpoint = "HitRF2Wheel"; };
+			class HitRMWheel: HitLFWheel { hitpoint = "HitRMWheel"; };
+			class HitRBWheel: HitLFWheel { hitpoint = "HitRBWheel"; };
+			
+			class HitGlass1: HitLFWheel { hitpoint = "HitGlass1"; };
+			class HitGlass2: HitLFWheel { hitpoint = "HitGlass2"; };
+			class HitGlass3: HitLFWheel { hitpoint = "HitGlass3"; };
+			class HitGlass4: HitLFWheel { hitpoint = "HitGlass4"; };
 		};
 		class VehicleTransport {
 			class Cargo {
@@ -310,7 +432,7 @@ class CfgVehicles {
 			};
 		};
 		driverDoor = "door_left";
-		cargoDoors[] = {"door_right","tailgate_fold"};
+		cargoDoors[] = {"tailgate_fold"};
 		class textureSources {
 			class woodland {
 				displayname = "Woodland";
@@ -522,8 +644,8 @@ class CfgVehicles {
 				allowLauncherIn=0;
 				allowLauncherOut=1;
 				//isCopilot = 1; //makes getting in work properly but breaks shooting out
-				memoryPointsGetInGunner = "pos codriver";
-				memoryPointsGetInGunnerDir = "pos codriver dir";
+				memoryPointsGetInGunner = "pos hatch";
+				memoryPointsGetInGunnerDir = "pos hatch dir";
 				animationSourceHatch = "Roof_Hatch";
 				gunnerGetInAction = "GetInHigh";
 				gunnerGetOutAction = "GetOutHigh";
@@ -536,8 +658,33 @@ class CfgVehicles {
 				outGunnerMayFire = 1;
 				maxOutElev = 75;
 				minOutElev = -35;
-				maxOutTurn = 90;
-				minOutTurn = -90;
+				maxOutTurn = 120;
+				minOutTurn = -120;
+			};
+			class CargoTurret_02: CargoTurret {
+				gunnerDoor = "door_right";
+				gunnerAction = "passenger_inside_2";
+				gunnerInAction = "passenger_inside_2";
+				memoryPointsGetInGunner = "pos codriver";
+				memoryPointsGetInGunnerDir = "pos codriver dir";
+				gunnerName = "Front passenger";
+				gunnerCompartments = "Compartment1";
+				ProxyIndex=2;
+				isPersonTurret = 1;
+				canHideGunner=0;
+				forceHideGunner = 1;
+				gunnerForceOptics=0;
+				maxElev = 45;
+				minElev = -45;
+				maxTurn = -30;
+				minTurn = -105;
+				
+				stabilizedInAxes = 0;
+				enabledByAnimationSource = "window_codriver";
+				commanding = 1;
+				soundAttenuationTurret = "OpenCarAttenuation";
+				disableSoundAttenuation = 0;
+				class HitPoints {};
 			};
 		};
 		/*class Turrets : Turrets {
@@ -568,42 +715,34 @@ class CfgVehicles {
 		};*/
 		
 		class HitPoints : HitPoints {
-			class HitGlass1 : HitGlass1 {
+			class HitGlass1: HitGlass1 {
 				armor = 0.1;
 				name = "glass1_viv";
 			};
-			
-			class HitGlass2 : HitGlass2 {
+			class HitGlass2: HitGlass2 {
 				armor = 0.1;
 				name = "glass2_viv";
 			};
-			
-			class HitGlass3 : HitGlass3 {
+			class HitGlass3: HitGlass3 {
 				armor = 0.1;
 				name = "glass3_viv";
 			};
-			
-			class HitGlass4 : HitGlass4 {
+			class HitGlass4: HitGlass4 {
 				armor = 0.1;
 				name = "glass4_viv";
 			};
-			
-			class HitLFWheel : HitLFWheel {
-				armor = 0.38;
-			};
-			
-			class HitLBWheel : HitLF2Wheel {
-				armor = 0.38;
-			};
-			
-			class HitRFWheel : HitRFWheel {
-				armor = 0.38;
-			};
-			
-			class HitRBWheel : HitRF2Wheel {
-				armor = 0.38;
-			};
-			
+
+
+			class HitLFWheel: HitLFWheel { armor = 0.38; };
+			class HitLF2Wheel: HitLF2Wheel { armor = 0.38; };
+			class HitLMWheel: HitLMWheel { armor = 0.38; };
+			class HitLBWheel: HitLBWheel { armor = 0.38; };
+
+			class HitRFWheel: HitRFWheel { armor = 0.38; };
+			class HitRF2Wheel: HitRF2Wheel { armor = 0.38; };
+			class HitRMWheel: HitRMWheel { armor = 0.38; };
+			class HitRBWheel: HitRBWheel { armor = 0.38; };
+
 			class HitFuel {
 				armor = 1.4;
 				material = -1;
@@ -688,10 +827,12 @@ class CfgVehicles {
 		class EventHandlers {
 			init = "_this call vurtual_mtvr_fnc_init";
 			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
+			turnIn = "_this call vurtual_mtvr_fnc_turnin";
 		};
 	};
 	class vurtual_mtvr_lhs16: vurtual_MTVRBase {
 		numberPhysicalWheels=8;
+		turnCoef=2;
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_lhs16.p3d";
 		displayname = "MTVR 16.5-Ton LHS (Legacy)";
@@ -728,8 +869,6 @@ class CfgVehicles {
 				WHEEL_SPRINGS(18869,8,WHEEL_STRENGTH,WHEEL_DAMPER)
 			};
 			class LR1: LR {
-				side = "right";
-				steering = 1;
 				boneName = "wheel_1_3_damper";
 				center   = "wheel_1_3_axis";
 				boundary = "wheel_1_3_bound";
@@ -764,8 +903,6 @@ class CfgVehicles {
 				WHEEL_SPRINGS(18869,8,WHEEL_STRENGTH,WHEEL_DAMPER)				
 			};
 			class RR1: RR {
-				side = "left";
-				steering = 1;
 				boneName = "wheel_2_3_damper";
 				center   = "wheel_2_3_axis";
 				boundary = "wheel_2_3_bound";
@@ -780,13 +917,14 @@ class CfgVehicles {
 				tireForceAppPointOffset = "wheel_2_4_axis";	
 			};
 		};
-		transportSoldier = 1;
+		transportSoldier = 0;
 		threat[] = {0.0, 0.0, 0.0};
 		class TransportWeapons {};
 	};
 	class vurtual_MTVRBase_Flatbed: vurtual_MTVRBase {
-		transportSoldier = 1;
+		transportSoldier = 0;
 		class AnimationSources: AnimationSources {
+			MTVR_ANIMSOURCE_BASE
 			class bed_hide {
 				source = "user";
 				initPhase = 1;
@@ -816,6 +954,7 @@ class CfgVehicles {
 			class CBA_Extended_EventHandlers: CBA_Extended_EventHandlers_base {};
 		};
 		class animationSources: animationSources {
+			MTVR_ANIMSOURCE_BASE
 			class flatrack_hide {
 				source = "user";
 				initPhase = 1;
@@ -829,7 +968,8 @@ class CfgVehicles {
 		threat[] = {0.0, 0.0, 0.0};
 		class Turrets: Turrets {
 			class CargoTurret_01: CargoTurret_01 {};
-			class CargoTurret_02: CargoTurret {
+			class CargoTurret_02: CargoTurret_02 {};
+			class CargoTurret_03: CargoTurret {
 				gunnerDoor = "tailgate_fold";
 				gunnerAction = "passenger_inside_2";
 				gunnerInAction = "passenger_inside_2"; //fixes standing up in steat
@@ -847,7 +987,7 @@ class CfgVehicles {
 				stabilizedInAxes=0;
 				commanding = 1; //fixes seat switching
 			};
-			class CargoTurret_03: CargoTurret_02 {
+			class CargoTurret_04: CargoTurret_03 {
 				memoryPointsGetInGunner = "pos tailgate";
 				memoryPointsGetInGunnerDir = "pos tailgate dir";
 				proxyIndex = 14;
@@ -856,6 +996,7 @@ class CfgVehicles {
 				gunnerName = "$STR_A3_TURRETS_CARGOTURRET_R";
 			};
 		};
+		//ACE_SelfActions
 		animationList[] =  {"brakelight_normal_hide",0,"blackout_hide",1,"bedseat_fold",0,"cargo_cover_hide",0};
 		class AnimationSources: AnimationSources {
 			class tailgate_fold {
@@ -910,13 +1051,14 @@ class CfgVehicles {
 		model = "\vurtual_mtvr\mtvr_mk23.p3d";
 		displayname = "MTVR Mk 23 Cargo";
 		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12}; //2 is front passenger
-		VIVGunners[] = {0,1}; //-1 is hatch gunner
+		VIVGunners[] = {1,2}; //-1 is hatch gunner, 0 is codriver
 		class Turrets: Turrets {
 			class CargoTurret_01: CargoTurret_01 {};
-			class CargoTurret_02: CargoTurret_02 {
+			class CargoTurret_02: CargoTurret_02 {};
+			class CargoTurret_03: CargoTurret_03 {
 				proxyIndex = 13;
 			};
-			class CargoTurret_03: CargoTurret_03 {
+			class CargoTurret_04: CargoTurret_04 {
 				proxyIndex = 14;
 			};
 		};
@@ -925,8 +1067,9 @@ class CfgVehicles {
 			libTextDesc = "Mk23 Cargo";
 		};
 		class AnimationSources: AnimationSources {
+			MTVR_ANIMSOURCE_PASSENGER
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {0,1,3,4,5,6,7,8,9,10,11,12}; //-1 is hatch gunner, 2 is front passenger
+				lockCargo[] = {1,2,3,4,5,6,7,8,9,10,11,12}; //-1 is hatch gunner, 0 is codriver
 			};
 		};
 
@@ -938,15 +1081,16 @@ class CfgVehicles {
 		turnCoef = 2;
 		displayname = "MTVR 4x4 Short Bed Cargo";
 		VIVPassengers[] = {3,4,5,6,7,8}; //2 is front passenger
-		VIVGunners[] = {0,1}; //-1 is hatch gunner
-		cargoProxyIndexes[] = {2,3,4,5,6,7,8};
-		transportSoldier = 7;
+		VIVGunners[] = {1,2}; //-1 is hatch gunner, 0 is codriver
+		cargoProxyIndexes[] = {3,4,5,6,7,8};
+		transportSoldier = 6;
 		class Turrets: Turrets {
 			class CargoTurret_01: CargoTurret_01 {};
-			class CargoTurret_02: CargoTurret_02 {
+			class CargoTurret_02: CargoTurret_02 {};
+			class CargoTurret_03: CargoTurret_03 {
 				proxyIndex = 9;
 			};
-			class CargoTurret_03: CargoTurret_03 {
+			class CargoTurret_04: CargoTurret_04 {
 				proxyIndex = 10;
 			};
 		};
@@ -955,8 +1099,9 @@ class CfgVehicles {
 			libTextDesc = "4x4 Short Bed Cargo";
 		};
 		class AnimationSources: AnimationSources {
+			MTVR_ANIMSOURCE_PASSENGER
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {0,1,3,4,5,6,7,8}; //-1 is hatch gunner, 2 is front passenger
+				lockCargo[] = {1,2,3,4,5,6,7,8}; //-1 is hatch gunner, 0 codriver
 			};
 		};
 		class VehicleTransport: VehicleTransport {
@@ -991,16 +1136,18 @@ class CfgVehicles {
 		scope = 2;
 		model = "\vurtual_mtvr\mtvr_mk27.p3d";
 		displayname = "MTVR Mk 27 Extended Cargo";
-		transportSoldier = 19;
+		transportSoldier = 18;
 		turnCoef = 2;
 		VIVPassengers[] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //2 is front passenger
-		VIVGunners[] = {0,1}; //-1 is hatch gunner
+		VIVGunners[] = {1,2}; //-1 is hatch gunner, 0 is codriver
+		cargoProxyIndexes[] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
 		class Turrets: Turrets {
 			class CargoTurret_01: CargoTurret_01 {};
-			class CargoTurret_02: CargoTurret_02 {
+			class CargoTurret_02: CargoTurret_02 {};
+			class CargoTurret_03: CargoTurret_03 {
 				proxyIndex = 21;
 			};
-			class CargoTurret_03: CargoTurret_03 {
+			class CargoTurret_04: CargoTurret_04 {
 				proxyIndex = 22;
 			};
 		};
@@ -1009,8 +1156,9 @@ class CfgVehicles {
 			libTextDesc = "Mk27 Extended Cargo";
 		};
 		class AnimationSources: AnimationSources {
+			MTVR_ANIMSOURCE_PASSENGER
 			class bedseat_fold: bedseat_fold {
-				lockCargo[] = {0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //-1 is hatch gunner, 2 is front passenger
+				lockCargo[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //-1 is hatch gunner, 0 is codriver
 			};
 		};
 		class VehicleTransport: VehicleTransport {

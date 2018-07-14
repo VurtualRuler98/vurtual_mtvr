@@ -25,17 +25,26 @@ _veh addAction ["Toggle HAZMAT Sign",{
 if (_veh isKindOf "vurtual_MTVRBase_Passenger") then {[_veh] call vurtual_mtvr_fnc_passenger;};
 
 if (isClass(configFile >> "CfgPatches" >> "Boxloader")) then {
-	[_veh,"VTV_exit_1"] call boxloader_fnc_driveon;
 	if (_veh isKindOf "vurtual_mtvr_lhs16_boxloader") then {
 		[_veh] call boxloader_fnc_init_pls;
+	} else {
+		[_veh,"VTV_exit_1"] call boxloader_fnc_driveon;
 	};
 };
-
+_veh addAction ["Turn",{
+	(_this select 0) animateSource ["GunnerTurn",abs ((_this select 0 animationSourcePhase "GunnerTurn")-1)];
+},[],0,false,true,"","vehicle _this == _target && isTurnedOut _this && (_target turretUnit [0] == _this)"];
+_veh addAction ["Open/Close Window",{
+	(_this select 0) animateDoor ["window_codriver",abs ((_this select 0 animationSourcePhase "window_codriver")-1)];
+},[],1.5,false,true,"","(_target getCargoIndex _this)==0"];
 [_veh] spawn {
 	_veh = (_this select 0);
 	while {alive (_veh)} do {
 		sleep 0.1;
 		if (local _veh) then {
+			if ((_veh animationSourcePhase "GunnerTurn")==1 && isNull (_veh turretUnit [0])) then {
+				_veh animateSource ["GunnerTurn",0,true];
+			};
 			if (isNull attachedTo _veh) then {
 				if ((AGLToASL (_veh modelToWorld (_veh selectionPosition "fording_depth"))) select 2 < 0) then {
 					_veh setHitPointDamage ["hitEngine",(_veh getHitPointDamage "hitEngine")+0.0025];
